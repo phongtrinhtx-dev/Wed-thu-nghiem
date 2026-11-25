@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ Thống Theo Dõi Hàng Hóa Trong Kho | Mẫu 26 - Mẫu 09 - Mẫu 1.6</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Feather Icons -->
+  <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <span class="brand-badge">HẬU CẦN QUÂN NHU</span>
+        <div class="brand-title">QUẢN LÝ KHO VẬT TƯ</div>
+        <div class="brand-sub">Chuẩn Mẫu 26 • Mẫu 09 • Mẫu 1.6</div>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-category">Chức năng chính</li>
+        <li>
+          <a class="menu-item active" data-tab="tab-dashboard">
+            <i data-feather="grid"></i>
+            <span>Tổng quan kho</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-item" data-tab="tab-receipts">
+            <i data-feather="arrow-down-left"></i>
+            <span>Nhập kho (Mẫu 26)</span>
+            <span class="badge" id="badge-in-count">0</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-item" data-tab="tab-issues">
+            <i data-feather="arrow-up-right"></i>
+            <span>Xuất kho (Mẫu 26)</span>
+            <span class="badge" id="badge-out-count">0</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-item" data-tab="tab-ledger">
+            <i data-feather="book-open"></i>
+            <span>Sổ theo dõi (Mẫu 09)</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-item" data-tab="tab-inventory">
+            <i data-feather="clipboard"></i>
+            <span>Báo cáo kiểm kê (1.6)</span>
+          </a>
+        </li>
+
+        <li class="menu-category">Dữ liệu & Biểu mẫu</li>
+        <li>
+          <a class="menu-item" data-tab="tab-products">
+            <i data-feather="package"></i>
+            <span>Danh mục mặt hàng</span>
+            <span class="badge" id="badge-prod-count">0</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-item" data-tab="tab-export-center">
+            <i data-feather="printer"></i>
+            <span>Menu xuất biểu mẫu</span>
+          </a>
+        </li>
+        <li>
+          <a class="menu-item" data-tab="tab-settings">
+            <i data-feather="settings"></i>
+            <span>Cài đặt & Sao lưu</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div>Kho Quân nhu - Sơn Tây</div>
+        <small style="opacity: 0.8;">Phiên bản Quản lý kho v2.5</small>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+      <!-- TOP NAVIGATION -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="page-heading" id="topbar-title">Tổng quan kho hàng</div>
+          <div class="unit-tag" id="topbar-unit-tag">Đơn vị: Trường CĐTS</div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn btn-outline btn-sm" id="btn-quick-backup" title="Sao lưu nhanh JSON">
+            <i data-feather="download-cloud"></i>
+            <span>Sao lưu</span>
+          </button>
+          <button class="btn btn-primary btn-sm" id="btn-quick-new-receipt">
+            <i data-feather="plus"></i>
+            <span>Nhập kho mới</span>
+          </button>
+          <button class="btn btn-navy btn-sm" id="btn-quick-new-issue">
+            <i data-feather="minus"></i>
+            <span>Xuất kho mới</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- CONTENT BODY -->
+      <main class="content-area">
+
+        <!-- ========================================== -->
+        <!-- TAB 1: TỔNG QUAN (DASHBOARD) -->
+        <!-- ========================================== -->
+        <div class="tab-content active" id="tab-dashboard">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-info">
+                <div class="stat-label">Tổng mặt hàng</div>
+                <div class="stat-val" id="stat-total-products">0</div>
+                <div class="stat-sub">Đang theo dõi trong kho</div>
+              </div>
+              <div class="stat-icon icon-blue">
+                <i data-feather="package"></i>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <div class="stat-label">Tổng tồn kho</div>
+                <div class="stat-val" id="stat-total-stock">0</div>
+                <div class="stat-sub">Hiện vật trong kho</div>
+              </div>
+              <div class="stat-icon icon-green">
+                <i data-feather="layers"></i>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <div class="stat-label">Tổng giá trị kho</div>
+                <div class="stat-val" id="stat-total-value">0 đ</div>
+                <div class="stat-sub">Theo thời giá hạch toán</div>
+              </div>
+              <div class="stat-icon icon-amber">
+                <i data-feather="dollar-sign"></i>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-info">
+                <div class="stat-label">Giao dịch gần đây</div>
+                <div class="stat-val" id="stat-today-trx">0</div>
+                <div class="stat-sub">Phiếu nhập / xuất đã lập</div>
+              </div>
+              <div class="stat-icon icon-red">
+                <i data-feather="activity"></i>
+              </div>
+            </div>
+          </div>
+
+          <!-- BIỂU ĐỒ & PHÂN TÍCH CHẤT LƯỢNG -->
+          <div class="grid-2">
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i data-feather="pie-chart"></i>
+                  <span>Cơ cấu phân cấp chất lượng hàng tồn kho</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <div id="quality-progress-bars" style="display: flex; flex-direction: column; gap: 14px;">
+                  <!-- Dynamic Quality bars -->
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i data-feather="alert-triangle"></i>
+                  <span>Cảnh báo tồn kho tối thiểu & Phẩm cấp</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <div id="stock-alerts-list" style="display: flex; flex-direction: column; gap: 10px;">
+                  <!-- Dynamic Alerts -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BẢNG GIAO DỊCH GẦN NHẤT -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <i data-feather="clock"></i>
+                <span>Giao dịch nhập - xuất kho gần nhất</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline btn-sm" onclick="app.switchTab('tab-receipts')">Xem tất cả nhập</button>
+                <button class="btn btn-outline btn-sm" onclick="app.switchTab('tab-issues')">Xem tất cả xuất</button>
+              </div>
+            </div>
+            <div class="card-body" style="padding: 0;">
+              <div class="table-responsive">
+                <table class="table-custom" id="tbl-recent-transactions">
+                  <thead>
+                    <tr>
+                      <th style="width: 120px;">Số phiếu</th>
+                      <th style="width: 100px;">Loại</th>
+                      <th style="width: 100px;">Ngày lập</th>
+                      <th>Đối tượng giao nhận</th>
+                      <th style="width: 110px;" class="text-center">Số mặt hàng</th>
+                      <th style="width: 140px;" class="text-right">Tổng thành tiền</th>
+                      <th style="width: 140px;" class="text-center">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 2: QUẢN LÝ NHẬP KHO (MẪU 26) -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="tab-receipts">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i data-feather="arrow-down-left"></i>
+                  <span>Danh sách Phiếu Nhập Kho (Mẫu 26: PNX-KH/QN17)</span>
+                </div>
+                <div class="card-subtitle">Theo dõi số lượng, phẩm cấp và giá trị vật tư, hàng hóa nhập vào kho</div>
+              </div>
+              <button class="btn btn-primary" id="btn-create-receipt">
+                <i data-feather="plus-circle"></i>
+                <span>Tạo phiếu nhập mới</span>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="filter-bar">
+                <div class="search-input">
+                  <input type="text" class="form-control" id="search-receipts" placeholder="Tìm theo số phiếu, tên đơn vị giao hàng...">
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <label class="form-label" style="margin: 0; white-space: nowrap;">Từ ngày:</label>
+                  <input type="date" class="form-control" id="receipt-filter-from" style="width: 150px;">
+                  <label class="form-label" style="margin: 0; white-space: nowrap;">Đến:</label>
+                  <input type="date" class="form-control" id="receipt-filter-to" style="width: 150px;">
+                  <button class="btn btn-outline" id="btn-receipt-reset-filter">Làm mới</button>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table-custom" id="tbl-receipts">
+                  <thead>
+                    <tr>
+                      <th style="width: 40px;" class="text-center">TT</th>
+                      <th style="width: 130px;">Số phiếu</th>
+                      <th style="width: 90px;">Quyển số</th>
+                      <th style="width: 100px;">Ngày nhập</th>
+                      <th>Nhập của (Đơn vị/Bên giao)</th>
+                      <th>Theo hợp đồng / Lệnh số</th>
+                      <th style="width: 100px;" class="text-center">Mặt hàng</th>
+                      <th style="width: 140px;" class="text-right">Tổng thành tiền</th>
+                      <th style="width: 200px;" class="text-center">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 3: QUẢN LÝ XUẤT KHO (MẪU 26) -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="tab-issues">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i data-feather="arrow-up-right"></i>
+                  <span>Danh sách Phiếu Xuất Kho (Biểu SS14-QN10 / Mẫu 26)</span>
+                </div>
+                <div class="card-subtitle">Theo dõi cấp phát, điều chuyển và xuất trả vật tư, dụng cụ, quân trang</div>
+              </div>
+              <button class="btn btn-navy" id="btn-create-issue">
+                <i data-feather="plus-circle"></i>
+                <span>Tạo phiếu xuất mới</span>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="filter-bar">
+                <div class="search-input">
+                  <input type="text" class="form-control" id="search-issues" placeholder="Tìm theo số phiếu, người nhận, đơn vị tiếp nhận...">
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <label class="form-label" style="margin: 0; white-space: nowrap;">Từ ngày:</label>
+                  <input type="date" class="form-control" id="issue-filter-from" style="width: 150px;">
+                  <label class="form-label" style="margin: 0; white-space: nowrap;">Đến:</label>
+                  <input type="date" class="form-control" id="issue-filter-to" style="width: 150px;">
+                  <button class="btn btn-outline" id="btn-issue-reset-filter">Làm mới</button>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table-custom" id="tbl-issues">
+                  <thead>
+                    <tr>
+                      <th style="width: 40px;" class="text-center">TT</th>
+                      <th style="width: 130px;">Số phiếu</th>
+                      <th style="width: 90px;">Quyển số</th>
+                      <th style="width: 100px;">Ngày xuất</th>
+                      <th>Người nhận & Đơn vị nhận</th>
+                      <th>Lý do xuất kho</th>
+                      <th style="width: 100px;" class="text-center">Mặt hàng</th>
+                      <th style="width: 140px;" class="text-right">Tổng thành tiền</th>
+                      <th style="width: 200px;" class="text-center">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 4: SỔ THEO DÕI VẬT CHẤT (MẪU 09) -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="tab-ledger">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i data-feather="book-open"></i>
+                  <span>Sổ Theo Dõi Vật Chất Quân Nhu (Mẫu 09: STD-KH/QN17)</span>
+                </div>
+                <div class="card-subtitle">Theo dõi chi tiết số lượng, phẩm cấp nhập, xuất, tồn lũy kế theo thời gian thực</div>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline-primary" id="btn-print-ledger">
+                  <i data-feather="printer"></i>
+                  <span>In Sổ theo dõi (A4 ngang)</span>
+                </button>
+                <button class="btn btn-success" id="btn-export-excel-ledger">
+                  <i data-feather="file-text"></i>
+                  <span>Xuất Excel Mẫu 09</span>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="filter-bar" style="background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);">
+                <div style="min-width: 250px;">
+                  <label class="form-label">Chọn mặt hàng xem sổ:</label>
+                  <select class="form-select" id="ledger-select-product">
+                    <option value="ALL">-- Tất cả mặt hàng trong kho --</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label">Từ ngày:</label>
+                  <input type="date" class="form-control" id="ledger-filter-from">
+                </div>
+                <div>
+                  <label class="form-label">Đến ngày:</label>
+                  <input type="date" class="form-control" id="ledger-filter-to">
+                </div>
+                <div style="margin-top: 22px;">
+                  <button class="btn btn-primary" id="btn-ledger-filter">
+                    <i data-feather="filter"></i>
+                    <span>Xem sổ</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- LEDGER DISPLAY CONTAINER -->
+              <div id="ledger-view-container" style="margin-top: 20px;">
+                <!-- Dynamic Ledger Tables -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 5: BÁO CÁO KIỂM KÊ (MẪU 1.6) -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="tab-inventory">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i data-feather="clipboard"></i>
+                  <span>Báo Cáo Kiểm Kê Vật Chất, Trang Bị (Mẫu số 1.6 - QN)</span>
+                </div>
+                <div class="card-subtitle">Thời điểm kiểm kê 0h ngày 01/7 hoặc 01/1 - Phụ lục 1 (SSCĐ) & Phụ lục 2 (Thường xuyên)</div>
+              </div>
+              <button class="btn btn-primary" id="btn-create-inventory-period">
+                <i data-feather="plus-circle"></i>
+                <span>Tạo kỳ kiểm kê mới</span>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="filter-bar">
+                <div style="min-width: 300px;">
+                  <label class="form-label">Chọn đợt kiểm kê:</label>
+                  <select class="form-select" id="select-inventory-period">
+                    <!-- Dynamic -->
+                  </select>
+                </div>
+                <div style="margin-top: 22px; display: flex; gap: 8px;">
+                  <button class="btn btn-outline-primary" id="btn-print-inventory">
+                    <i data-feather="printer"></i>
+                    <span>In Báo cáo (Mẫu 1.6)</span>
+                  </button>
+                  <button class="btn btn-success" id="btn-export-excel-inventory">
+                    <i data-feather="file-text"></i>
+                    <span>Xuất Excel Mẫu 1.6</span>
+                  </button>
+                  <button class="btn btn-navy" id="btn-export-word-inventory">
+                    <i data-feather="file"></i>
+                    <span>Xuất Word (.doc)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- INVENTORY DETAILS & TABS -->
+              <div id="inventory-view-container" style="margin-top: 20px;">
+                <!-- Dynamic Inventory Content -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 6: DANH MỤC HÀNG HÓA -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="tab-products">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i data-feather="package"></i>
+                  <span>Danh Mục Mặt Hàng Trong Kho</span>
+                </div>
+                <div class="card-subtitle">Quản lý mã hàng hóa, đơn vị tính, đơn giá, định mức tồn và phân loại</div>
+              </div>
+              <button class="btn btn-primary" id="btn-add-product">
+                <i data-feather="plus"></i>
+                <span>Thêm mặt hàng mới</span>
+              </button>
+            </div>
+            <div class="card-body">
+              <div class="filter-bar">
+                <div class="search-input">
+                  <input type="text" class="form-control" id="search-products" placeholder="Tìm theo tên hoặc mã mặt hàng...">
+                </div>
+                <select class="form-select" id="filter-category" style="width: 220px;">
+                  <option value="ALL">-- Tất cả nhóm hàng --</option>
+                  <option value="CAT_QT">Quân trang</option>
+                  <option value="CAT_CD">Dụng cụ cấp dưỡng</option>
+                  <option value="CAT_QL">Quân lương - LTTP</option>
+                  <option value="CAT_DC">Doanh cụ & Khác</option>
+                </select>
+                <select class="form-select" id="filter-stock-type" style="width: 200px;">
+                  <option value="ALL">-- Phân loại sử dụng --</option>
+                  <option value="TXuyen">Thường xuyên</option>
+                  <option value="DTSSCD">Dự trữ SSCĐ</option>
+                </select>
+              </div>
+
+              <div class="table-responsive">
+                <table class="table-custom" id="tbl-products">
+                  <thead>
+                    <tr>
+                      <th style="width: 40px;" class="text-center">TT</th>
+                      <th style="width: 150px;">Mã số</th>
+                      <th>Tên mặt hàng & Quy cách</th>
+                      <th style="width: 130px;">Nhóm hàng</th>
+                      <th style="width: 60px;" class="text-center">ĐVT</th>
+                      <th style="width: 110px;" class="text-right">Đơn giá (đ)</th>
+                      <th style="width: 90px;" class="text-center">Phân loại</th>
+                      <th style="width: 100px;" class="text-right">Tồn hiện tại</th>
+                      <th style="width: 130px;" class="text-right">Tổng giá trị</th>
+                      <th style="width: 120px;" class="text-center">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 7: MENU XUẤT BIỂU MẪU (EXPORT CENTER) -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="tab-export-center">
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">
+                  <i data-feather="printer"></i>
+                  <span>Trung Tâm Xuất Báo Cáo & Biểu Mẫu Quy Chuẩn</span>
+                </div>
+                <div class="card-subtitle">Xuất file Excel, Word và In ấn trực tiếp theo đúng mẫu biểu đính kèm</div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="grid-2">
+                <!-- Card 1: Mẫu 26 Nhập -->
+                <div class="template-card">
+                  <div>
+                    <span class="template-code">MẪU 26: PNX-KH/QN17</span>
+                    <div class="template-title">Phiếu Nhập Kho Quân Nhu / Vật Chất</div>
+                    <div class="template-desc">
+                      Mẫu phiếu nhập kho dùng cho cấp Tiểu đoàn, Trường, Kho tiếp nhận vật chất, lương thực thực phẩm, quân trang từ cấp trên hoặc nhà cung cấp. Gồm bảng chi tiết số lượng phải nhập, thực nhập, phẩm cấp, thành tiền và 4 chữ ký hợp lệ.
+                    </div>
+                  </div>
+                  <div class="template-actions">
+                    <button class="btn btn-primary btn-sm" onclick="app.openExportModal('RECEIPT')">
+                      <i data-feather="printer"></i> Xem & In phiếu
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="app.quickExportReceiptExcel()">
+                      <i data-feather="file-text"></i> Xuất Excel (.xlsx)
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Card 2: Mẫu 26 Xuất -->
+                <div class="template-card">
+                  <div>
+                    <span class="template-code">BIỂU SS14-QN10 (MẪU 26)</span>
+                    <div class="template-title">Phiếu Xuất Kho Cấp Phát / Điều Chuyển</div>
+                    <div class="template-desc">
+                      Mẫu phiếu xuất kho cấp phát vật chất, quân trang chiến sĩ, dụng cụ nhà ăn, bếp cấp dưỡng. Đầy đủ họ tên người nhận, lý do xuất, bảng hàng hóa, đơn giá, thành tiền và 5 vị trí ký duyệt (Viết phiếu, Nhận, Thủ kho, Chủ nhiệm Hậu cần, Thủ trưởng).
+                    </div>
+                  </div>
+                  <div class="template-actions">
+                    <button class="btn btn-navy btn-sm" onclick="app.openExportModal('ISSUE')">
+                      <i data-feather="printer"></i> Xem & In phiếu
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="app.quickExportIssueExcel()">
+                      <i data-feather="file-text"></i> Xuất Excel (.xlsx)
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Card 3: Mẫu 09 Sổ theo dõi -->
+                <div class="template-card">
+                  <div>
+                    <span class="template-code">MẪU 09: STD-KH/QN17</span>
+                    <div class="template-title">Sổ Theo Dõi Vật Chất Quân Nhu (Thẻ Kho)</div>
+                    <div class="template-desc">
+                      Sổ theo dõi nhập, xuất, tồn theo từng ngày và từng chứng từ lệnh. Tự động tính số dư đầu kỳ, tổng phát sinh nhập, xuất trong kỳ và tồn lũy kế cuối kỳ cho từng mặt hàng và phẩm cấp chất lượng.
+                    </div>
+                  </div>
+                  <div class="template-actions">
+                    <button class="btn btn-outline-primary btn-sm" onclick="app.switchTab('tab-ledger')">
+                      <i data-feather="eye"></i> Xem sổ chi tiết
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="document.getElementById('btn-export-excel-ledger').click()">
+                      <i data-feather="file-text"></i> Xuất Excel Mẫu 09
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Card 4: Mẫu 1.6 Báo cáo kiểm kê -->
+                <div class="template-card">
+                  <div>
+                    <span class="template-code">MẪU SỐ 1.6 / QN</span>
+                    <div class="template-title">Báo Cáo Kết Quả Kiểm Kê Vật Chất Trang Bị</div>
+                    <div class="template-desc">
+                      Kiểm kê 0h ngày 01/7 hoặc 01/1 định kỳ gồm Phụ lục 1 (Vật chất dự trữ SSCĐ) và Phụ lục 2 (Vật chất thường xuyên). Đối chiếu sổ sách vs thực tế kiểm đếm, tính thừa thiếu, phân bổ chất lượng Hạng 1 - 4 và đề xuất phương án xử lý.
+                    </div>
+                  </div>
+                  <div class="template-actions">
+                    <button class="btn btn-outline-primary btn-sm" onclick="app.switchTab('tab-inventory')">
+                      <i data-feather="eye"></i> Xem báo cáo
+                    </button>
+                    <button class="btn btn-success btn-sm" onclick="document.getElementById('btn-export-excel-inventory').click()">
+                      <i data-feather="file-text"></i> Xuất Excel Mẫu 1.6
+                    </button>
+                    <button class="btn btn-navy btn-sm" onclick="document.getElementById('btn-export-word-inventory').click()">
+                      <i data-feather="file"></i> Xuất Word (.doc)
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- TAB 8: CÀI ĐẶT & SAO LƯU -->
+        <!-- ========================================== -->
+        <div class="tab-content" id="tab-settings">
+          <div class="grid-2">
+            <!-- Settings Form -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i data-feather="sliders"></i>
+                  <span>Thông Tin Đơn Vị & Cấu Hình Biểu Mẫu</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <form id="form-settings">
+                  <div class="form-group">
+                    <label class="form-label required">Tên đơn vị chủ quản (Cấp trên):</label>
+                    <input type="text" class="form-control" id="cfg-unitName" required>
+                  </div>
+                  <div class="grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Đơn vị trực thuộc / Cấp lập phiếu:</label>
+                      <input type="text" class="form-control" id="cfg-subUnit">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Phòng / Ban quản lý:</label>
+                      <input type="text" class="form-control" id="cfg-department">
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Tên kho vật chất:</label>
+                      <input type="text" class="form-control" id="cfg-warehouseName">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Địa điểm kho:</label>
+                      <input type="text" class="form-control" id="cfg-warehouseAddress">
+                    </div>
+                  </div>
+
+                  <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
+                  <div style="font-weight: 700; margin-bottom: 10px; color: var(--dark);">Thông tin cán bộ phụ trách ký duyệt:</div>
+
+                  <div class="grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Thủ kho:</label>
+                      <input type="text" class="form-control" id="cfg-storekeeper">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Trợ lý / Người viết phiếu:</label>
+                      <input type="text" class="form-control" id="cfg-officerInCharge">
+                    </div>
+                  </div>
+                  <div class="grid-2">
+                    <div class="form-group">
+                      <label class="form-label">Chủ nhiệm Hậu cần:</label>
+                      <input type="text" class="form-control" id="cfg-chiefLogistics">
+                    </div>
+                    <div class="form-group">
+                      <label class="form-label">Chỉ huy đơn vị / Hiệu trưởng duyệt:</label>
+                      <input type="text" class="form-control" id="cfg-commander">
+                    </div>
+                  </div>
+
+                  <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                    <i data-feather="save"></i>
+                    <span>Lưu cấu hình đơn vị</span>
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            <!-- Backup & Restore -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i data-feather="database"></i>
+                  <span>Sao Lưu & Phục Hồi Dữ Liệu</span>
+                </div>
+              </div>
+              <div class="card-body">
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 16px;">
+                  Hệ thống tự động lưu trữ toàn bộ dữ liệu trên trình duyệt của bạn (LocalStorage & IndexedDB). Bạn có thể sao lưu ra tệp JSON để lưu trữ an toàn hoặc chuyển sang máy tính khác.
+                </p>
+
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <button class="btn btn-outline-primary" id="btn-export-backup-json" style="justify-content: flex-start;">
+                    <i data-feather="download"></i>
+                    <span>Tải về tệp Sao Lưu toàn bộ dữ liệu (.json)</span>
+                  </button>
+
+                  <div style="border: 1px dashed var(--border-color); padding: 14px; border-radius: var(--radius-md);">
+                    <label class="form-label font-bold">Phục hồi dữ liệu từ tệp sao lưu:</label>
+                    <input type="file" id="file-restore-json" accept=".json" class="form-control" style="margin-bottom: 10px;">
+                    <button class="btn btn-warning" id="btn-restore-json">
+                      <i data-feather="upload"></i>
+                      <span>Phục hồi dữ liệu</span>
+                    </button>
+                  </div>
+
+                  <hr style="margin: 10px 0; border: none; border-top: 1px solid var(--border-color);">
+
+                  <div>
+                    <label class="form-label" style="color: var(--danger); font-weight: 700;">Khôi phục dữ liệu mẫu ban đầu:</label>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+                      Nếu muốn nạp lại dữ liệu chuẩn trích xuất từ các file Mẫu 26, Mẫu 09, Mẫu 1.6 ban đầu, hãy nhấn nút dưới đây.
+                    </p>
+                    <button class="btn btn-danger btn-sm" id="btn-reset-defaults">
+                      <i data-feather="refresh-cw"></i>
+                      <span>Khôi phục về dữ liệu mẫu gốc</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 1: TẠO / SỬA PHIẾU NHẬP KHO (MẪU 26) -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="modal-receipt">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-receipt-title">Lập Phiếu Nhập Kho (Mẫu 26: PNX-KH/QN17)</div>
+        <button class="modal-close" onclick="app.closeModal('modal-receipt')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-receipt">
+          <input type="hidden" id="receipt-id">
+          
+          <div class="grid-4">
+            <div class="form-group">
+              <label class="form-label required">Số phiếu nhập:</label>
+              <input type="text" class="form-control" id="receipt-code" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Quyển số:</label>
+              <input type="text" class="form-control" id="receipt-bookNo" value="01/2026">
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Ngày lập phiếu:</label>
+              <input type="date" class="form-control" id="receipt-date" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Có giá trị đến:</label>
+              <input type="date" class="form-control" id="receipt-validUntil">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label required">Nhập của (Đơn vị / Cửa hàng giao):</label>
+              <input type="text" class="form-control" id="receipt-partnerName" placeholder="Ví dụ: Cửa hàng Cấn Thị Dung / Kho Cầu Bươu..." required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Địa chỉ bên giao:</label>
+              <input type="text" class="form-control" id="receipt-partnerAddress" placeholder="Sơn Tây - Hà Nội...">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Theo hợp đồng / Lệnh số:</label>
+              <input type="text" class="form-control" id="receipt-contractNo" placeholder="HĐKT số 10/HĐ-KT ngày...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phương tiện / Người vận chuyển:</label>
+              <input type="text" class="form-control" id="receipt-transportBy" placeholder="Hàng do cửa hàng vận chuyển...">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Lý do nhập kho / Diễn giải:</label>
+            <input type="text" class="form-control" id="receipt-notes" placeholder="Nhập phục vụ công tác huấn luyện tân binh...">
+          </div>
+
+          <!-- BẢNG CHI TIẾT MẶT HÀNG NHẬP -->
+          <div style="margin: 16px 0 8px 0; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 700; color: var(--dark);">Danh sách mặt hàng nhập kho:</div>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-receipt-add-row">
+              <i data-feather="plus"></i> Thêm dòng hàng
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-custom" id="tbl-receipt-items">
+              <thead>
+                <tr>
+                  <th style="width: 35px;" class="text-center">TT</th>
+                  <th style="min-width: 220px;">Mặt hàng</th>
+                  <th style="width: 70px;" class="text-center">ĐVT</th>
+                  <th style="width: 110px;">Chất lượng</th>
+                  <th style="width: 90px;">Phải nhập</th>
+                  <th style="width: 90px;">Thực nhập</th>
+                  <th style="width: 110px;">Đơn giá</th>
+                  <th style="width: 120px;" class="text-right">Thành tiền</th>
+                  <th style="width: 120px;">Ghi chú</th>
+                  <th style="width: 40px;" class="text-center">Xóa</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-receipt-items">
+                <!-- Dynamic Items -->
+              </tbody>
+              <tfoot>
+                <tr style="font-weight: bold; background: #f8fafc;">
+                  <td colspan="5" class="text-center">TỔNG CỘNG TIỀN HÀNG</td>
+                  <td id="receipt-total-qty" class="text-right">0</td>
+                  <td></td>
+                  <td id="receipt-total-amount" class="text-right" style="color: var(--primary);">0 đ</td>
+                  <td colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- THÔNG TIN CHỮ KÝ -->
+          <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
+          <div class="grid-4">
+            <div class="form-group">
+              <label class="form-label">Người viết phiếu:</label>
+              <input type="text" class="form-control" id="receipt-signerCreator">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Người giao hàng:</label>
+              <input type="text" class="form-control" id="receipt-signerDeliverer">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Thủ kho (Người nhận):</label>
+              <input type="text" class="form-control" id="receipt-signerReceiver">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Người duyệt:</label>
+              <input type="text" class="form-control" id="receipt-signerApprover">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="app.closeModal('modal-receipt')">Đóng</button>
+        <button type="button" class="btn btn-primary" id="btn-save-receipt">
+          <i data-feather="check"></i> Lưu phiếu nhập
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 2: TẠO / SỬA PHIẾU XUẤT KHO (MẪU 26) -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="modal-issue">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-issue-title">Lập Phiếu Xuất Kho (Biểu SS14-QN10 / Mẫu 26)</div>
+        <button class="modal-close" onclick="app.closeModal('modal-issue')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-issue">
+          <input type="hidden" id="issue-id">
+          
+          <div class="grid-4">
+            <div class="form-group">
+              <label class="form-label required">Số phiếu xuất:</label>
+              <input type="text" class="form-control" id="issue-code" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Quyển số:</label>
+              <input type="text" class="form-control" id="issue-bookNo" value="01/2026">
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Ngày lập phiếu:</label>
+              <input type="date" class="form-control" id="issue-date" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Có giá trị đến:</label>
+              <input type="date" class="form-control" id="issue-validUntil">
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label required">Họ, tên người nhận:</label>
+              <input type="text" class="form-control" id="issue-receiverName" placeholder="Ví dụ: Trần Tuấn Đạt..." required>
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Đơn vị (Bộ phận) nhận hàng:</label>
+              <input type="text" class="form-control" id="issue-receiverUnit" placeholder="Ví dụ: Đại đội 7 - Tiểu đoàn 3 / Kho Cầu Bươu..." required>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label">Theo hợp đồng / Lệnh xuất số:</label>
+              <input type="text" class="form-control" id="issue-contractNo" placeholder="Lệnh cấp phát số 12/LX-QN...">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Lý do xuất kho:</label>
+              <input type="text" class="form-control" id="issue-reason" placeholder="Cấp phát dụng cụ cấp dưỡng, quân trang...">
+            </div>
+          </div>
+
+          <!-- BẢNG CHI TIẾT MẶT HÀNG XUẤT -->
+          <div style="margin: 16px 0 8px 0; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 700; color: var(--dark);">Danh sách mặt hàng xuất kho:</div>
+            <button type="button" class="btn btn-outline-primary btn-sm" id="btn-issue-add-row">
+              <i data-feather="plus"></i> Thêm dòng hàng
+            </button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table-custom" id="tbl-issue-items">
+              <thead>
+                <tr>
+                  <th style="width: 35px;" class="text-center">TT</th>
+                  <th style="min-width: 220px;">Mặt hàng</th>
+                  <th style="width: 70px;" class="text-center">ĐVT</th>
+                  <th style="width: 110px;">Chất lượng</th>
+                  <th style="width: 90px;">Tồn kho</th>
+                  <th style="width: 90px;">Phải xuất</th>
+                  <th style="width: 90px;">Thực xuất</th>
+                  <th style="width: 110px;">Đơn giá</th>
+                  <th style="width: 120px;" class="text-right">Thành tiền</th>
+                  <th style="width: 110px;">Ghi chú</th>
+                  <th style="width: 40px;" class="text-center">Xóa</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-issue-items">
+                <!-- Dynamic Items -->
+              </tbody>
+              <tfoot>
+                <tr style="font-weight: bold; background: #f8fafc;">
+                  <td colspan="6" class="text-center">TỔNG CỘNG TIỀN HÀNG XUẤT</td>
+                  <td id="issue-total-qty" class="text-right">0</td>
+                  <td></td>
+                  <td id="issue-total-amount" class="text-right" style="color: var(--danger);">0 đ</td>
+                  <td colspan="2"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <!-- THÔNG TIN CHỮ KÝ -->
+          <hr style="margin: 16px 0; border: none; border-top: 1px solid var(--border-color);">
+          <div class="grid-4" style="grid-template-columns: repeat(5, 1fr);">
+            <div class="form-group">
+              <label class="form-label">Người viết phiếu:</label>
+              <input type="text" class="form-control" id="issue-signerCreator">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Người nhận:</label>
+              <input type="text" class="form-control" id="issue-signerReceiver">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Thủ kho:</label>
+              <input type="text" class="form-control" id="issue-signerStorekeeper">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Chủ nhiệm Hậu cần:</label>
+              <input type="text" class="form-control" id="issue-signerChief">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Thủ trưởng duyệt:</label>
+              <input type="text" class="form-control" id="issue-signerApprover">
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="app.closeModal('modal-issue')">Đóng</button>
+        <button type="button" class="btn btn-navy" id="btn-save-issue">
+          <i data-feather="check"></i> Lưu phiếu xuất
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 3: THÊM / SỬA MẶT HÀNG -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="modal-product">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-product-title">Thông Tin Mặt Hàng</div>
+        <button class="modal-close" onclick="app.closeModal('modal-product')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-product">
+          <input type="hidden" id="prod-id">
+
+          <div class="form-group">
+            <label class="form-label required">Mã số mặt hàng:</label>
+            <input type="text" class="form-control" id="prod-code" placeholder="Ví dụ: Q02.02.02.06.00.010..." required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Tên mặt hàng:</label>
+            <input type="text" class="form-control" id="prod-name" placeholder="Áo ấm SQ nam 3 lớp..." required>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label required">Nhóm ngành hàng:</label>
+              <select class="form-select" id="prod-category" required>
+                <option value="CAT_QT">Quân trang</option>
+                <option value="CAT_CD">Dụng cụ cấp dưỡng</option>
+                <option value="CAT_QL">Quân lương - LTTP</option>
+                <option value="CAT_DC">Doanh cụ & Khác</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Đơn vị tính:</label>
+              <input type="text" class="form-control" id="prod-unit" placeholder="Cái, Bộ, Kg, Tấn..." required>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="form-group">
+              <label class="form-label required">Đơn giá hạch toán (đ):</label>
+              <input type="number" class="form-control" id="prod-price" min="0" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phân loại sử dụng:</label>
+              <select class="form-select" id="prod-type">
+                <option value="TXuyen">Thường xuyên (Phụ lục 2)</option>
+                <option value="DTSSCD">Dự trữ SSCĐ (Phụ lục 1)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Định mức tồn tối thiểu:</label>
+            <input type="number" class="form-control" id="prod-minStock" value="10">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Quy cách kỹ thuật / Ký mã hiệu:</label>
+            <input type="text" class="form-control" id="prod-specs" placeholder="Vải K03 dã ngoại...">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ghi chú:</label>
+            <input type="text" class="form-control" id="prod-notes">
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="app.closeModal('modal-product')">Đóng</button>
+        <button type="button" class="btn btn-primary" id="btn-save-product">Lưu mặt hàng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 4: TẠO KỲ KIỂM KÊ MỚI (MẪU 1.6) -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="modal-new-inventory">
+    <div class="modal-box modal-sm">
+      <div class="modal-header">
+        <div class="modal-title">Tạo Kỳ Kiểm Kê Vật Chất Kho (Mẫu 1.6)</div>
+        <button class="modal-close" onclick="app.closeModal('modal-new-inventory')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="form-new-inventory">
+          <div class="form-group">
+            <label class="form-label required">Tiêu đề đợt kiểm kê:</label>
+            <input type="text" class="form-control" id="new-inv-title" value="Kiểm kê vật chất trang bị Quân nhu 0h ngày 01/07/2026" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label required">Thời điểm kiểm kê (0h ngày):</label>
+            <input type="date" class="form-control" id="new-inv-date" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kỳ kiểm kê trước (Đối chiếu):</label>
+            <input type="date" class="form-control" id="new-inv-prev-date">
+          </div>
+          <p class="form-text">
+            Hệ thống sẽ tự động chốt số dư tồn kho sổ sách tại thời điểm kiểm kê và chuẩn bị sẵn bảng kiểm đếm thực tế kèm phân loại phẩm cấp (Cấp 1 - 4).
+          </p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="app.closeModal('modal-new-inventory')">Đóng</button>
+        <button type="button" class="btn btn-primary" id="btn-submit-new-inventory">Khởi tạo đợt kiểm kê</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL 5: XEM TRƯỚC VÀ IN BIỂU MẪU (PRINT PREVIEW) -->
+  <!-- ========================================================================= -->
+  <div class="modal-backdrop" id="modal-print-preview">
+    <div class="modal-box modal-lg" style="max-width: 1200px;">
+      <div class="modal-header">
+        <div class="modal-title" id="modal-print-title">Xem Trước Biểu Mẫu</div>
+        <div style="display: flex; gap: 8px;">
+          <button class="btn btn-success btn-sm" id="btn-print-modal-excel">
+            <i data-feather="file-text"></i> Tải file Excel
+          </button>
+          <button class="btn btn-primary btn-sm" id="btn-print-modal-direct">
+            <i data-feather="printer"></i> In ngay
+          </button>
+          <button class="modal-close" onclick="app.closeModal('modal-print-preview')">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <div class="print-preview-container" id="print-preview-content">
+          <!-- Dynamic Form Content -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTAINER CHO IN ẤN TRỰC TIẾP -->
+  <div id="print-container" style="display: none;"></div>
+
+  <!-- TOAST CONTAINER -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- SCRIPTS -->
+  <script src="js/sample-data.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/export-templates.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
